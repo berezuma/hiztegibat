@@ -2,7 +2,7 @@
 
 Egitura **Bermiotarra** proiektutik (https://bermiotarra.zital.eus, GPL 3.0) hartu da eta proiektu honetara egokitu.
 
-- `private/` — TypeScript iturburu-kodea (eraikitzailea eta bilatzailea).
+- `private/` — TypeScript iturburu-kodea (eraikitzailea).
 - `public/` — sortzen den web estatikoa (`index.html`, `berbak/*.html`, baliabideak).
 
 ## Behar diren tresnak #
@@ -37,10 +37,6 @@ Edo zuzenean:
 cd web/private
 deno --allow-run --allow-read --allow-write build.ts
 ```
-
-## Bilatzailea #
-
-`server.ts`-k 8080 portuan `/search?q=...` eskaerak erantzuten ditu, `web/public/berbak/*.html` fitxategietan bilatuz eta emaitzak nabarmenduta itzuliz. Ekoizpenean nginx-ekin atzean jartzen da (ikus jatorrizko proiektuaren konfigurazioa).
 
 ## Egokitzeko geratzen dena #
 

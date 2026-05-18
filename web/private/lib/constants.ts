@@ -5,8 +5,7 @@ const Constants =
     RELATIVE_ROOT:  '/',
     TITLE:          'Hiztegi bat',
     DESCRIPTION:    'Gorka Urbizuren letretako hitzen hiztegi librea, euskara ikasteko',
-    HEADER:         'Hiztegi bat',
-    SEARCH_CAPTION: 'Hiztegi bat: Bilatzailea'
+    HEADER:         'Hiztegi bat'
 }
 
 export default Constants

@@ -68,7 +68,6 @@ export class Build
 
 
         let html: string =  View.load('./templates/header.jst', params)+
-                            View.load('./templates/search.jst', { q: '' })+
                             View.load('./templates/index.jst', { result: result })+
                             View.load('./templates/footer.jst', Constants)
 

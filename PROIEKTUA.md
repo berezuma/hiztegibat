@@ -45,12 +45,10 @@ euskaragorkarekin/
     ├── README.md                   # web-aplikazioaren instalazio/build oharrak
     ├── private/                    # TypeScript iturburu-kodea
     │   ├── build.ts  → lib/build.ts        # ekoizpen-build-a (pandoc bidez)
-    │   ├── search.ts → lib/search.ts       # bilatzailea (CLI eta server)
-    │   ├── server.ts → lib/server.ts       # 8080 portuko /search zerbitzaria
     │   ├── lib/constants.ts                # TITLE, HEADER, PUBLIC_ROOT, etab.
     │   ├── lib/view.ts                     # .jst txantiloiak kargatzen ditu
     │   ├── lib/interfaces.ts
-    │   ├── templates/header.jst footer.jst index.jst search.jst
+    │   ├── templates/header.jst footer.jst index.jst jokoa.jst
     │   ├── build.py                        # PDF/EPUB sortzeko (aukerakoa)
     │   └── preview.mjs                     # PANDOC GABEKO aurrebista — node-rekin
     └── public/                     # SORTUTAKO web estatikoa (build-aren irteera)
@@ -98,7 +96,7 @@ bash deploy.sh build      # ncc-rekin bilbatu eta node-rekin exekutatu (jatorriz
 
 **Letra-orrien behealdeko nabigazioa:** letra-orri bakoitzak (`berbak/x.html`) `#content`-etik kanpo `<nav id="letters">` bat du, letra guztietarako estekekin (uneko letra `class="current"`). `footer.jst`-ko `${__params.LETTERS_NAV || ''}` txertaguneak egiten du; `build.ts`-k eta `preview.mjs`-k betetzen dute. Hasiera-orrian hutsik dago. **Garrantzitsua:** `search.ts`-k `#content`-eko childNodes-ak H3-ka taldekatzen ditu; ez sartu ezer `#content` barruan H3 ez denik lehen H3aren aurretik.
 
-**Bilatzailea:** `server.ts` → 8080 portua, `/search?q=...`; `web/public/berbak/*.html`-en bilatzen du, emaitzak `<mark>`-ekin nabarmenduta. Ekoizpenean nginx-en atzean.
+**Bilatzailea:** kenduta (2026-05-18). Testua idazteko bilatzailea (`search.jst`) eta haren backend-a (`search.ts`, `server.ts`, `lib/search.ts`, `lib/server.ts`) ezabatu ziren. Webak ez du bilaketarik; alfabetoaren/letren zerrenda eta jokoa baino ez. Berreskuratu nahi izanez gero, jatorrizko Bermiotarra proiektuan dago.
 
 ## 6. Konfigurazioa egokitzekoa (oraindik egin gabe)
 

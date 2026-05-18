@@ -23,8 +23,7 @@ const Constants = {
   RELATIVE_ROOT:  '/',
   TITLE:          'Hiztegi bat',
   DESCRIPTION:    'Gorka Urbizuren letretako hitzen hiztegi librea, euskara ikasteko',
-  HEADER:         'Hiztegi bat',
-  SEARCH_CAPTION: 'Hiztegi bat: Bilatzailea'
+  HEADER:         'Hiztegi bat'
 }
 
 // --- txantiloiak (View.load-en pareko) ---
@@ -462,7 +461,6 @@ fs.writeFileSync(path.join(PUBLIC, 'abestiak.html'), abestiakHtml)
 // --- index.html ---
 const indexHtml =
   loadTpl('header.jst', { ...Constants, LINK_HOME: Constants.RELATIVE_ROOT, HERO }) + '\n'
-  + loadTpl('search.jst', { q: '' }) + '\n'
   + loadTpl('index.jst', { result: index }) + '\n'
   + loadTpl('footer.jst', Constants)
 fs.writeFileSync(path.join(PUBLIC, 'index.html'), indexHtml)
