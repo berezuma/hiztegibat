@@ -2,7 +2,7 @@
 
 Proiektu hau **Gorka Urbizu** musikariaren letretan oinarritutako euskara ikasteko hiztegi bat da. Asmoa da letretan agertzen diren hitz bereziak —jasoak, mailegatuak, dialektalak edo hitz-eraketa erakusteko baliagarriak— bildu eta haien esanahia ematea, jendeak euskara letra horien bidez landu dezan.
 
-Proiektu hau [ZiTAL/bermiotarra](https://github.com/ZiTAL/bermiotarra) proiektuaren kodean oinarrituta dago (GPL 3.0 lizentzia). Eskerrik asko ZiTAL-i bere lana komunitatearentzat eskura jarrita.
+Proiektu hau [ZiTAL/bermiotarra](https://github.com/ZiTAL/bermiotarra) proiektuaren kodean oinarrituta dago (GPL 3.0 lizentzia). Eskerrik asko ZiTAL-i bere lana komunitatearentzat eskura jartzeagatik.
 
 Iturriak: Gorka Urbizuren bakarkako *Hasiera bat* (2024) eta **Berri Txarrak** taldearen diskografia osoa (1997–2019), letra guztiak Gorka Urbizurenak. **Letrak ez dira hemen kopiatzen** (egile-eskubideen jabearenak dira): hitz solteak eta aipamen laburrak baino ez dira erabiltzen, beti abestiaren eta diskoaren izenarekin.
 
