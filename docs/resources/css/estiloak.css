@@ -365,6 +365,7 @@ p
 	color: var(--ink);
 	border-bottom: 1px solid var(--accent);
 	padding-bottom: 1px;
+	white-space: nowrap;
 }
 
 #topnav a:hover
