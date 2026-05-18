@@ -1,0 +1,12 @@
+.project
+.pydevproject
+.settings
+.vscode
+
+web/public/index.html
+web/public/berbak
+web/public/resources/euskara-gorkarekin.pdf
+web/public/resources/euskara-gorkarekin.epub
+web/public/resources/full.md
+web/private/dist
+web/private/node_modules

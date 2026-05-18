@@ -1,0 +1,46 @@
+import re
+import os
+import subprocess
+
+def get_files(dirs: list[str], allow: list[re.Pattern] = []) -> list[str]:
+    files = []
+    for dir in dirs:
+        for g in os.listdir(dir):
+            if allow:
+                for a in allow:
+                    if re.search(a, g):
+                        files.append(f'{dir}/{g}')
+            else:
+                files.append(f'{dir}/{g}')
+    return files
+
+md_dirs  = [os.path.realpath('../../berbak')]
+md_files = get_files(md_dirs, [re.compile(r'\.md$', re.IGNORECASE)])
+
+full = ''
+
+for md in md_files:
+    letter = re.search(r'([^/]+)\.[^.]+$', md)
+    if letter:
+        content = open(md, 'r', encoding='utf-8').read().replace('#', '##')
+        full += f'# {letter.group(1).upper()} #\n\n{content}\\pagebreak\n\n'
+
+
+full = open('../../README.md', 'r', encoding='utf-8').read() + f'\\pagebreak\n\n{full}'
+
+open('../public/resources/full.md', 'w', encoding='utf-8').write(full)
+
+pdf_path     = '../public/resources/euskara-gorkarekin.pdf'
+epub_path    = '../public/resources/euskara-gorkarekin.epub'
+full_md_path = '../public/resources/full.md'
+
+if os.path.exists(pdf_path):
+    os.remove(pdf_path)
+if os.path.exists(epub_path):
+    os.remove(epub_path)
+
+subprocess.run('pandoc ../public/resources/full.md -f markdown -t latex --pdf-engine=pdflatex -o ../public/resources/euskara-gorkarekin.pdf', shell=True)
+subprocess.run('pandoc ../public/resources/full.md -o ../public/resources/euskara-gorkarekin.epub', shell=True)
+
+if os.path.exists(full_md_path):
+    os.remove(full_md_path)

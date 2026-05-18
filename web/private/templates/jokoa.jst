@@ -1,0 +1,28 @@
+<div id="game">
+  <div id="game-header">
+    <span id="progress-meta"></span>
+    <span id="score-badge"></span>
+  </div>
+  <div id="progress-bar"><div id="progress-bar-fill"></div></div>
+
+  <div id="question">
+    <div id="quote-wrap">
+      <blockquote id="quote"></blockquote>
+      <p id="song"></p>
+    </div>
+  </div>
+
+  <div id="options"></div>
+
+  <div id="feedback" hidden></div>
+
+  <div id="end" hidden>
+    <h3>Bukatu duzu!</h3>
+    <span id="final-score"></span>
+    <button id="restart">Berriz jokatu</button>
+    <p style="margin-top:1rem;"><a href="${__params.PUBLIC_ROOT+__params.RELATIVE_ROOT}">Hasierara itzuli</a></p>
+  </div>
+</div>
+
+<script id="hutsunea-data" type="application/json">${__params.GAME_DATA}</script>
+<script src="${__params.PUBLIC_ROOT+__params.RELATIVE_ROOT}resources/js/jokoa.js"></script>

@@ -1,0 +1,237 @@
+import * as Interfaces  from './interfaces.ts'
+import * as fs          from 'node:fs'
+import { View }         from './view.ts'
+import { JSDOM }        from 'jsdom'
+import Constants from './constants.ts'
+
+// Small synchronous command runner using Deno.Command
+const textDecoder = new TextDecoder()
+function execSync(command: string): string
+{
+    const cmd    = new Deno.Command('sh', { args: ['-lc', command] })
+    const output = cmd.outputSync()
+    if(output.code !== 0)
+    {
+        const stderr = textDecoder.decode(output.stderr)
+        throw new Error(`Command failed: ${stderr}`)
+    }
+    return textDecoder.decode(output.stdout)
+}
+
+export class Build
+{
+    constructor()
+    {
+        let self = this
+        self.html()
+        self.index()
+//        self.external()
+    }
+
+    index(): void {
+        const dirs: string[] =
+        [
+            '../public/berbak-esamoldiek/'
+        ]
+
+        let result: Interfaces.Object = {}
+        dirs.forEach(function (dir)
+        {
+            let files: string[] = fs.readdirSync(dir)
+            files = files.filter(function(f)
+            {
+                if (f.match(/[a-z]{1}\.html$/))
+                    return true
+                return false
+            })
+
+            files.forEach(function(f)
+            {
+                const filename = dir + f
+                const m: any = filename.match(/([^\/]+)\/([^\/]+)\.html$/i)
+                if (m !== null)
+                {
+                    const d: string = m[1]
+                    result[d] = result[d] || []
+
+                    result[d].push(
+                    {
+                        'link': m[0],
+                        'word': m[2]
+                    })
+                }
+            })
+        })
+
+        let params: Interfaces.Object   = Constants
+        params.LINK_HOME                = Constants.PUBLIC_ROOT + Constants.RELATIVE_ROOT
+
+
+        let html: string =  View.load('./templates/header.jst', params)+
+                            View.load('./templates/search.jst', { q: '' })+
+                            View.load('./templates/index.jst', { result: result })+
+                            View.load('./templates/footer.jst', Constants)
+
+        fs.writeFileSync('../public/index.html', html, 'utf-8')
+    }
+
+    html(): void
+    {
+        let self = this
+        self.deleteResources()
+
+        // create folder
+        execSync('mkdir -p ../public/berbak-esamoldiek/')
+
+        // markdown dir list
+        const md_dirs: string[] =
+        [
+            fs.realpathSync('../../berbak-esamoldiek')
+        ]
+
+        // markdown files list
+        const md_files = self.getFiles(md_dirs,
+        [
+            /\.md$/i
+        ])
+
+        // Web-erako Heading-ak aldatuko ditugu ## (H2) -> ### (H3) eta # (H1) -> ## (H2) bihurtuz
+        md_files.forEach(function (md)
+        {
+            let m = md.match(/([^\/]+)\.md$/)
+            if (m !== null)
+            {
+                const letter:      string = m[1].toUpperCase()
+                const tmp_md:      string = md.replace(/berbak\-esamoldiek/, 'web/public/berbak-esamoldiek')
+                const file_html:   string = tmp_md.replace(/\.md$/, '.html')
+                let   tmp_content: string = fs.readFileSync(md, { encoding: 'utf8', flag: 'r' })
+                                            .replace(/#\s+([^#]+)\s+#\s*\n/g, "### $1 ###\n\n")
+
+                tmp_content = "## "+letter+" ##\n\n"+tmp_content
+                fs.writeFileSync(tmp_md, tmp_content)
+
+                let params: Interfaces.Object = Constants
+                params.LINK_HOME              = '../'
+
+                const command: string         = `pandoc -f markdown -t html5 ${tmp_md}`
+                let   html:    string         = execSync(command).toString()
+                html                          =   View.load('./templates/header.jst', params)+
+                                                    html+
+                                                    View.load('./templates/footer.jst', Constants)
+                html                          = self.anchor(html)
+
+                fs.writeFileSync(file_html, html)
+
+                execSync(`rm -rf ${tmp_md}`)
+            }
+        })
+    }
+
+    getFiles(dirs: string[], allow: RegExp[] = []): string[]
+    {
+        let files: string[] = []
+        dirs.forEach(function (dir)
+        {
+            let f = fs.readdirSync(dir)
+
+            f.forEach(function(g)
+            {
+                if(allow.length > 0)
+                {
+                    allow.forEach(function (a)
+                    {
+                        if(g.match(a))
+                            files.push(`${dir}/${g}`)
+                    })
+                }
+                else
+                    files.push(`${dir}/${g}`)
+            })
+        })
+        return files
+    }
+
+    anchor(html: string): string
+    {
+        let dom: any = new JSDOM(html)
+        dom.window.document.querySelectorAll('h3').forEach(function (e: HTMLHeadingElement)
+        {
+            let word: string    = e.innerHTML
+            const id: string    = e.getAttribute('id') || ''
+
+            let a               = dom.window.document.createElement('a')
+            a.setAttribute('href', "#" + id)
+            a.appendChild(dom.window.document.createTextNode(word))
+
+            while (e.hasChildNodes())
+                e.removeChild(e.childNodes[0])
+
+            e.appendChild(a)
+        })
+        return dom.serialize()
+    }
+
+    deleteResources(): void
+    {
+        let to_delete: string[] = []
+
+        let resources: string[] =
+        [
+            '../public/index.html',
+            '../public/berbak-esamoldiek/'
+        ]
+
+        resources.forEach(function(r)
+        {
+            try
+            {
+                to_delete.push(fs.realpathSync(r))
+            }
+            catch (e){}
+        })
+
+        to_delete.forEach(function(td)
+        {
+            let command: string = `rm -rf ${td}`
+            execSync(command)
+        })
+    }
+
+    external(): void
+    {
+        let self = this
+
+        const md_dirs: string[] =
+        [
+            fs.realpathSync('../../berbak-esamoldiek')
+        ]
+        const md_files = self.getFiles(md_dirs,
+        [
+            /\.md$/i
+        ])
+
+        let full: string = ''
+        md_files.forEach(function(md)
+        {
+            const letter = md.match(/([^\/]+)\.[^\.]+$/)
+            if(letter)
+                full = `${full}# ${letter[1].toUpperCase()} #\n\n${fs.readFileSync(md, { encoding: 'utf8', flag: 'r' }).replace(/#/g, '##')}\\pagebreak\n\n`
+        })
+        full = `${fs.readFileSync('../../BEGONA.md', { encoding: 'utf8', flag: 'r' })}\\pagebreak\n\n${full}`
+        full = `${fs.readFileSync('../../README.md', { encoding: 'utf8', flag: 'r' })}\\pagebreak\n\n${full}`
+
+        fs.writeFileSync('../public/resources/full.md', full, 'utf-8')
+
+        let command = `rm -rf ../public/resources/bermiotarra.pdf ../public/resources/bermiotarra.epub`
+        execSync(command)
+
+        command     = `pandoc ../public/resources/full.md -f markdown -t latex --pdf-engine=pdflatex -o ../public/resources/bermiotarra.pdf`
+        execSync(command)
+
+        command     = `pandoc ../public/resources/full.md -o ../public/resources/bermiotarra.epub`
+        execSync(command)
+
+        command     = `rm -rf ../public/resources/full.md`
+        execSync(command)
+    }
+}
